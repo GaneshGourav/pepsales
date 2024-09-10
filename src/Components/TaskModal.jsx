@@ -38,7 +38,7 @@ function TaskModal({ closeModal, addTask, taskToEdit }) {
             required
           />
           <textarea
-          className="textarea"
+            className="textarea"
             placeholder="Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}

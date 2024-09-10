@@ -38,6 +38,14 @@ function Task({ task, onEdit }) {
     >
       <h4>{task.title}</h4>
       <p>{task.description}</p>
+      <p className="creation-time">
+        <strong>Created:</strong> {task.createdAt}
+      </p>
+      {task.updatedAt && (
+        <p className="updated-time">
+          <strong>Updated:</strong> {task.updatedAt}
+        </p>
+      )}
       <button onClick={handleEditClick} className="edit-btn">
         Edit
       </button>

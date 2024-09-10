@@ -6,48 +6,88 @@ import {
   DELETE_TASK,
 } from "./actionTypes";
 
+const loadFromLocalStorage = () => {
+  try {
+    const taskData = localStorage.getItem("tasks");
+    return taskData ? JSON.parse(taskData) : [];
+  } catch (e) {
+    console.error("Could not load tasks from localStorage", e);
+    return [];
+  }
+};
+
+const saveToLocalStorage = (tasks) => {
+  try {
+    const taskData = JSON.stringify(tasks);
+    localStorage.setItem("tasks", taskData);
+  } catch (e) {
+    console.error("Could not save tasks to localStorage", e);
+  }
+};
+
 const initialState = {
-  tasks: [],
+  tasks: loadFromLocalStorage(),
   filter: "",
 };
 
 const tasksReducer = (state = initialState, action) => {
+  let updatedTasks;
   switch (action.type) {
     case ADD_TASK:
+      updatedTasks = [
+        ...state.tasks,
+        {
+          ...action.payload,
+          status: "pending",
+          createdAt: new Date().toLocaleString(),
+        },
+      ];
+      saveToLocalStorage(updatedTasks);
       return {
         ...state,
-        tasks: [...state.tasks, { ...action.payload, status: "pending" }],
+        tasks: updatedTasks,
       };
 
     case EDIT_TASK:
+      updatedTasks = state.tasks.map((task) =>
+        task.id === action.payload.id
+          ? {
+              ...task,
+              title: action.payload.title,
+              description: action.payload.description,
+            }
+          : task
+      );
+      saveToLocalStorage(updatedTasks);
       return {
         ...state,
-        tasks: state.tasks.map((task) =>
-          task.id === action.payload.id
-            ? {
-                ...task,
-                title: action.payload.title,
-                description: action.payload.description,
-              }
-            : task
-        ),
+        tasks: updatedTasks,
       };
 
     case UPDATE_TASK_STATUS:
+      updatedTasks = state.tasks.map((task) =>
+        task.id === action.payload.id
+          ? {
+              ...task,
+              status: action.payload.status,
+              updatedAt: new Date().toLocaleString(),
+            }
+          : task
+      );
+      saveToLocalStorage(updatedTasks);
       return {
         ...state,
-        tasks: state.tasks.map((task) =>
-          task.id === action.payload.id
-            ? { ...task, status: action.payload.status }
-            : task
-        ),
+        tasks: updatedTasks,
       };
 
     case DELETE_TASK:
+      updatedTasks = state.tasks.filter((task) => task.id !== action.payload);
+      saveToLocalStorage(updatedTasks);
       return {
         ...state,
-        tasks: state.tasks.filter((task) => task.id !== action.payload),
+        tasks: updatedTasks,
       };
+
     case SET_FILTER:
       return {
         ...state,

@@ -38,3 +38,8 @@
 .task button:hover {
   opacity: 0.8;
 }
+.creation-time,
+.updated-time {
+  font-size: 9px;
+  font-weight: 700;
+}
